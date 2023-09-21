@@ -4,6 +4,10 @@ brew install hcloud
 
 hetzner cloud tarafından api key alıyorsun.
 
-hcloud context create Secops (komutu girdikten sonra token giriyorsun)
+(komutu girdikten sonra token giriyorsun)
+hcloud context create Secops 
 
-hcloud server create --name test --image ubuntu-20.04 --type cx11 --without-ipv6 --location hel1
+ssh-key'i hetzner arayüzünden giriyorsun.
+hcloud server create --name test --image ubuntu-20.04 --type cx11 --without-ipv6 --location hel1 --ssh-key mac
+
+hcloud server delete test
