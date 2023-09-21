@@ -7,7 +7,7 @@ source ../main.sh
 # cx31  =  2 CPU 8GB Ram
 # cpx31 =  4 CPU 8GB Ram
 
-SERVER_NAME=k3s
+SERVER_NAME=rke2
 SERVER_IMAGE=ubuntu-20.04
 SERVER_TYPE=cx21
 SERVER_LOCATION=hel1
