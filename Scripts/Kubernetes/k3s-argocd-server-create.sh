@@ -1,26 +1,16 @@
 #!/bin/bash
 
-#machine oluşturuluyor
+source ../main.sh 
 
 # cx21  =  2 CPU 4GB Ram
 # cpx21 =  3 CPU 4GB Ram
 # cx31  =  2 CPU 8GB Ram
 # cpx31 =  4 CPU 8GB Ram
 
-echo "machine oluşturuluyor"
-ip=$(hcloud server create --name k3s --image ubuntu-20.04 --type cx21 --without-ipv6 --location hel1 --ssh-key mac | grep "IPv4:" | awk '{print $2}')
-echo "Oluşturulan IP: $ip"
+# create_server "$server_name" "$server_image" "$server_type" "$server_location" "$server_sshkey"
+create_server "k3s" "ubuntu-20.04" "cx21" "hel1" "mac"
 
-while ! nc -z $ip 22; do
-    echo "Machine'nin açılması bekleniyor"
-    sleep 2
-done
-
-echo "Sunucu known_hosts'a ekleniyor"
-ssh-keyscan -H "$ip" -p 22 >> /Users/koraykutanoglu/.ssh/known_hosts
-
-echo "k3s kuruluyor"
-ssh root@$ip "sudo -E apt update;sudo -E apt upgrade -y;curl -sfL https://get.k3s.io | sudo sh -;kubectl get nodes"
+install_k3s
 
 echo "ArgoCD Kuruluyor"
 ssh root@$ip "kubectl create namespace argocd;kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml"
@@ -45,8 +35,4 @@ else
     echo "işlemlere devam ediliyor"
 fi
 
-echo "sunucuya bağlanılıyor"
-ssh root@$ip
-
-read -p "Sunucuyu silmek için entere basın"
-hcloud server delete k3s
+delete_server
