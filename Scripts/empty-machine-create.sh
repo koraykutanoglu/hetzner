@@ -27,3 +27,6 @@ ssh root@$ip
 
 read -p "Sunucuyu silmek için entere basın"
 hcloud server delete k3s
+
+echo "açık sunucu varmı kontrol et"
+hcloud server list
