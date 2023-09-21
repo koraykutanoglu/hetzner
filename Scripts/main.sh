@@ -31,11 +31,13 @@ create_server() {
 
 delete_server() {
   
+  local server_name=$1
+  
   echo "${separator// /-} Connecting to Server ${separator// /-}"
   ssh root@$ip
 
   echo "${separator// /-} Server Deletion ${separator// /-}"
-  hcloud server delete k3s
+  hcloud server delete $server_name
 
 }
 

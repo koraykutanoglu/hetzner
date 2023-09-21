@@ -7,7 +7,12 @@ source ../main.sh
 # cx31  =  2 CPU 8GB Ram
 # cpx31 =  4 CPU 8GB Ram
 
-# create_server "$server_name" "$server_image" "$server_type" "$server_location" "$server_sshkey"
-create_server "k3s" "ubuntu-20.04" "cx21" "hel1" "mac"
+SERVER_NAME=k3s
+SERVER_IMAGE=ubuntu-20.04
+SERVER_TYPE=cx21
+SERVER_LOCATION=hel1
+SERVER_SSHKEY=mac
 
-delete_server
+create_server "$SERVER_NAME" "$SERVER_IMAGE" "$SERVER_TYPE" "$SERVER_LOCATION" "$SERVER_SSHKEY"
+
+delete_server "$SERVER_NAME"
