@@ -2,7 +2,7 @@
 
 ###################### NODEJS INSTALL WITH APT ######################
 
-source ../main.sh 
+source ../Content/main.sh 
 
 # cx21  =  2 CPU 4GB Ram
 # cpx21 =  3 CPU 4GB Ram
