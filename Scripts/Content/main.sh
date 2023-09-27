@@ -47,3 +47,40 @@ install_k3s() {
   ssh root@$ip "sudo -E apt update;sudo -E apt upgrade -y;curl -sfL https://get.k3s.io | sudo sh -;kubectl get nodes"
 
 }
+
+
+
+install_argocd() {
+
+  echo "${separator// /-} Install ArgoCD ${separator// /-}"
+  ssh root@$ip "kubectl create namespace argocd;kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml"
+
+  max_retries=16
+  retries=0
+  while [ $retries -lt $max_retries ]; do
+    argocd_password=$(ssh root@$ip "kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d" 2>/dev/null)
+    if [ -n "$argocd_password" ]; then
+        echo "${separator// /-} ArgoCD admin şifresi: $argocd_password ${separator// /-}"
+        break
+    else
+        echo "${separator// /-} ArgoCD admin şifresi henüz hazır değil, bekleniyor... ${separator// /-}"
+        sleep 5
+        retries=$((retries + 1))
+    fi
+  done
+
+  if [ -z "$argocd_password" ]; then
+    echo "${separator// /-} ArgoCD admin şifresi alınamadı, işlem başarısız oldu. ${separator// /-}"
+  else
+    echo "${separator// /-} işlemlere devam ediliyor ${separator// /-}"
+  fi
+
+  echo "${separator// /-} Setting the ArgoCD Service as a NodePort ${separator// /-}"
+  ssh root@$ip <<EOF
+    kubectl patch service argocd-server -n argocd --type='json' -p '[{"op":"replace","path":"/spec/type","value":"NodePort"}]'
+    kubectl patch service argocd-server -n argocd --type='json' -p '[{"op":"replace","path":"/spec/type","value":"NodePort"},{"op":"replace","path":"/spec/ports/0/nodePort","value":30000}]'
+    kubectl get services -n argocd
+    echo "ArgoCD Erişim IP'si: http://$ip:30000"
+  EOF
+
+}
