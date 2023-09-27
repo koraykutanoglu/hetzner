@@ -28,7 +28,7 @@ while [ $retries -lt $max_retries ]; do
         echo "ArgoCD admin şifresi: $argocd_password"
         break
     else
-        echo "ArgoCD admin şifresi henüz hazır değil, bekleniyor..."
+        echo "${separator// /-} ArgoCD admin şifresi henüz hazır değil, bekleniyor... ${separator// /-}"
         sleep 5
         retries=$((retries + 1))
     fi
@@ -39,5 +39,14 @@ if [ -z "$argocd_password" ]; then
 else
     echo "işlemlere devam ediliyor"
 fi
+
+
+echo "${separator// /-} Setting the ArgoCD Service as a NodePort ${separator// /-}"
+ssh root@$ip <<EOF
+kubectl patch service argocd-server -n argocd --type='json' -p '[{"op":"replace","path":"/spec/type","value":"NodePort"}]'
+kubectl patch service argocd-server -n argocd --type='json' -p '[{"op":"replace","path":"/spec/type","value":"NodePort"},{"op":"replace","path":"/spec/ports/0/nodePort","value":30000}]'
+kubectl get services -n argocd
+echo "ArgoCD Erişim IP'si: http://$ip:30000"
+EOF
 
 delete_server "$SERVER_NAME"
